@@ -1,23 +1,5 @@
 # Service Chat
 
-## DB structure 
-
-### Table User
-- id
-- username
-- password
-- is_admin
-
-### Table Message
-- chat
-- datetime
-- text
-
-### Table Chat
-- id
-- customer(user, Null)
-- admin(user, Null)
-
 ## Endpoints
 - / - chat from customer side
 - /login
