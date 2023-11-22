@@ -2,9 +2,16 @@
 
 ## Endpoints
 - / - chat from customer side
+- /register
 - /login
 - /admin - chat from admin side
-- /api/chat/<id> - get chat history
+- /api/chat/ - get all chats (с фильтрами inbox, all, my)
+- /api/chat/ - post user message (or websocket) new or old
+- /api/chat/<id> - get chat history (for admin)
+- /api/chat/<id>/ - post admin message (ws), accept chat (link to admin)
+- /api/login
+- /api/register
+- 
 
 
 ## Notes
@@ -23,3 +30,11 @@
 - Админ может открыть чат, и начать в нем писать, 
 тогда чат будет перепривязан к нему.
 - у пользователя отображаются ответы админа.
+
+## Steps 
+- создать сервисы для взаимодействия с бд
+- создать систему регистрации и аутенификации
+- система сообщений
+- создать фронтенд для регистрации и логина
+- фронтенд для пользователя
+- фронтенд для админа
