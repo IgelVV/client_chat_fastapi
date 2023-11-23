@@ -1,14 +1,18 @@
 from datetime import timedelta
+from typing import Annotated
 
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from starlette.status import HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED
+from jose import JWTError
 
 from src import schemas
 from src.auth.user_services import UserSelector, UserService
 from src.db.connector import Database
 from src.config import ACCESS_TOKEN_EXPIRE_MINUTES
 
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login/")
 
 db = Database().connection
 
@@ -18,7 +22,7 @@ router = APIRouter(
 )
 
 
-@router.post("/register/", response_model=schemas.LiteUser, status_code=201)
+@router.post("/register/", response_model=schemas.UserId, status_code=201)
 async def register(user_data: schemas.UserCreate):
     selector = UserSelector()
     service = UserService()
@@ -56,3 +60,18 @@ async def login(user_data: OAuth2PasswordRequestForm = Depends()):
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
+
+@router.get("/me/", response_model=schemas.UserDisplay)
+async def read_users_me(token: Annotated[str, Depends(oauth2_scheme)]):
+    credentials_exception = HTTPException(
+        status_code=HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        user = UserSelector().get_user_by_token(db, token)
+    except (ValueError, JWTError):
+        raise credentials_exception
+    if not user:
+        raise credentials_exception
+    return user

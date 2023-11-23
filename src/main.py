@@ -17,15 +17,10 @@ async def hello():
     with db.cursor() as cursor:
         cursor.execute("SELECT * FROM User")
         result = cursor.fetchall()
-
-    from src.auth.hashing import Hasher
-    print(Hasher.get_password_hash("password"))
-    print(Hasher.get_password_hash("password"))
-    print(len(Hasher.get_password_hash("password")))
     return result
 
 
-@app.get("/user/{username}", response_model=Optional[schemas.User])
+@app.get("/user/{username}", response_model=Optional[schemas.UserDisplay])
 async def get_by_username(username: str):
     user = UserSelector().get_user_by_username(db, username)
     return user

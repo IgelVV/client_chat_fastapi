@@ -4,8 +4,13 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 
 
-class LiteUser(BaseModel):
+class UserId(BaseModel):
     id: int
+
+
+class UserDisplay(UserId):
+    username: str = Field(max_length=50)
+    is_admin: bool
 
 
 class UserLogin(BaseModel):
@@ -38,3 +43,7 @@ class Message(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+
+class TokenData(BaseModel):
+    username: str | None = None
