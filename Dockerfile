@@ -1,6 +1,7 @@
 FROM python:3.11
 
 ENV PYTHONUNBUFFERED=1
+ENV PYTHONPATH=$PYTHONPATH:/app
 
 RUN apt-get update
 RUN apt-get install nano

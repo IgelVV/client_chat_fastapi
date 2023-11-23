@@ -40,3 +40,11 @@
 - создать фронтенд для регистрации и логина
 - фронтенд для пользователя
 - фронтенд для админа
+
+## Dependencies
+
+- `fastapi[all]`
+- `datetime`
+- `PyMySQL`
+- `python-jose[cryptography]`
+- `passlib[bcrypt]`
