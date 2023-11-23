@@ -1,5 +1,6 @@
 from connector import get_connection
-
+from src.auth.hashing import Hasher
+from src.config import INITIAL_ADMIN_NAME, INITIAL_ADMIN_PASS
 
 connection = get_connection()
 
@@ -52,12 +53,13 @@ with connection:
     connection.commit()
     print("Message table exists.")
 
+    hashed_password = Hasher.get_password_hash(INITIAL_ADMIN_PASS)
     with connection.cursor() as cursor:
         sql = """
             INSERT IGNORE INTO User(username, password, is_admin) 
-            VALUES ('admin', 'password', true)
+            VALUES (%s, %s, %s)
             """
-        cursor.execute(sql)
+        cursor.execute(sql, (INITIAL_ADMIN_NAME, hashed_password, True))
 
     connection.commit()
     print("admin user is created.")

@@ -8,7 +8,12 @@ class LiteUser(BaseModel):
     id: int
 
 
-class UserCreate(BaseModel):
+class UserLogin(BaseModel):
+    username: str = Field(max_length=50)
+    password: str
+
+
+class UserCreate(UserLogin):
     username: str = Field(max_length=50)
     password: str
     is_admin: bool
@@ -28,3 +33,8 @@ class Message(BaseModel):
     chat: Chat
     datetime: datetime
     text: str = Field(max_length=500)
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
