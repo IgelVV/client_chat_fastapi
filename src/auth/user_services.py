@@ -1,7 +1,10 @@
+from datetime import timedelta, datetime
 from typing import Optional
 
-from src.db.connector import get_connection
+from jose import jwt
+
 from src.auth.hashing import Hasher
+from src.config import SECRET_KEY, ALGORITHM
 
 
 class UserSelector:
@@ -36,10 +39,21 @@ class UserService:
         return result
 
     @staticmethod
-    def check_user_password(db_connection, username, password):
+    def authenticate(db_connection, username, password):
         user = UserSelector.get_user_by_username(db_connection, username)
         if user:
-            result = Hasher.verify_password(password, user["password"])
+            if Hasher.verify_password(password, user["password"]):
+                return user
+        return None
+
+    @staticmethod
+    def create_access_token(data: dict,
+                            expires_delta: timedelta | None = None):
+        to_encode = data.copy()
+        if expires_delta:
+            expire = datetime.utcnow() + expires_delta
         else:
-            result = False
-        return result
+            expire = datetime.utcnow() + timedelta(minutes=15)
+        to_encode.update({"exp": expire})
+        encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+        return encoded_jwt
