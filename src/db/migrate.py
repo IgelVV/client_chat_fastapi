@@ -52,15 +52,17 @@ with connection:
     connection.commit()
     print("Message table exists.")
 
+    with connection.cursor() as cursor:
+        sql = """
+            INSERT IGNORE INTO User(username, password, is_admin) 
+            VALUES ('admin', 'password', true)
+            """
+        cursor.execute(sql)
+
+    connection.commit()
+    print("admin user is created.")
+
     print("Migration is completed.")
-
-
-    # with connection.cursor() as cursor:
-    #     # Read a single record
-    #     sql = "SELECT `id`, `password` FROM `users` WHERE `email`=%s"
-    #     cursor.execute(sql, ('webmaster@python.org',))
-    #     result = cursor.fetchone()
-    #     print(result)
 
 
 # select LENGTH(SHA2(CONVERT('asasdasd' USING utf8), 256));

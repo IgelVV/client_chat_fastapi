@@ -4,11 +4,18 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 
 
-class User(BaseModel):
+class LiteUser(BaseModel):
     id: int
+
+
+class UserCreate(BaseModel):
     username: str = Field(max_length=50)
     password: str
     is_admin: bool
+
+
+class User(UserCreate):
+    id: int
 
 
 class Chat(BaseModel):

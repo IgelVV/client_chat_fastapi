@@ -1,4 +1,6 @@
-from db.connector import get_connection
+from typing import Optional
+
+from src.db.connector import get_connection
 
 
 class UserSelector:
@@ -10,7 +12,7 @@ class UserSelector:
                 result = cursor.fetchone()
                 return result
 
-    def get_user_by_username(self, username: str):
+    def get_user_by_username(self, username: str) -> Optional[dict]:
         connection = get_connection()
         with connection:
             with connection.cursor() as cursor:

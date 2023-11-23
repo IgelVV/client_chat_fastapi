@@ -19,12 +19,12 @@ services:
 
   app:
     build: .
-    command: sh -c "python db/migrate.py && 
-                    uvicorn main:app --reload --host 0.0.0.0 --port 8000"
+    command: sh -c "python src/db/migrate.py && 
+                    uvicorn src.main:app --reload --host 0.0.0.0 --port 8000"
     ports:
       - 8000:8000
     volumes:
-      - ./src:/app/
+      - ./:/app/
     depends_on:
       db:
         condition: service_healthy
