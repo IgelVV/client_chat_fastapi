@@ -43,6 +43,7 @@ class Message(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+    is_admin: bool
 
 
 class TokenData(BaseModel):

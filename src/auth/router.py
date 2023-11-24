@@ -3,7 +3,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from starlette.status import HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED
+from starlette.status import HTTP_401_UNAUTHORIZED, HTTP_409_CONFLICT
 from jose import JWTError
 
 from src import schemas
@@ -28,7 +28,7 @@ async def register(user_data: schemas.UserCreate):
     service = UserService()
     if selector.get_user_by_username(db, user_data.username):
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST,
+            status_code=HTTP_409_CONFLICT,
             detail="User with this username already exists.",
         )
     user_id = service.create_user(
@@ -56,9 +56,14 @@ async def login(user_data: OAuth2PasswordRequestForm = Depends()):
     access_token_expires = timedelta(
         minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = service.create_access_token(
-        data={"sub": user["username"]}, expires_delta=access_token_expires
+        data={"sub": {"username": user["username"], "is_admin": user["is_admin"]}},
+        expires_delta=access_token_expires,
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "is_admin": user["is_admin"],
+    }
 
 
 @router.get("/me/", response_model=schemas.UserDisplay)
