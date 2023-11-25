@@ -31,5 +31,14 @@ services:
       db:
         condition: service_healthy
 
+  frontend:
+    build: ./frontend/
+    command: sh -c "npm start"
+    ports:
+      - 3000:3000
+    volumes:
+      - ./frontend:/app/
+    restart: on-failure
+
 volumes:
   data:
