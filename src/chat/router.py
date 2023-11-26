@@ -62,11 +62,12 @@ async def get_chat_history_by_id(
     chat_selector = ChatSelector()
     if not user["is_admin"]:
         chat = chat_selector.get_chat_by_id(db, chat_id)
-        if user["id"] != chat["customer_id"]:
-            raise HTTPException(
-                status_code=HTTP_403_FORBIDDEN,
-                headers={"WWW-Authenticate": "Bearer"},
-            )
+        if chat:
+            if user["id"] != chat["customer_id"]:
+                raise HTTPException(
+                    status_code=HTTP_403_FORBIDDEN,
+                    headers={"WWW-Authenticate": "Bearer"},
+                )
     messages = chat_selector.get_chat_history_by_id(db, chat_id)
     return messages
 
@@ -92,8 +93,7 @@ async def websocket_chat(websocket: WebSocket, chat_id, token):
                 ChatService().insert_message(
                     db, chat_id, user_id, date_time, data)
 
-                opponent = ChatSelector().get_chat_opponent(
-                    db, chat_id, user_id)
+
 
 
                 await ws_connector.send_personal_msg(
@@ -102,7 +102,10 @@ async def websocket_chat(websocket: WebSocket, chat_id, token):
                     date_time=date_time,
                     websocket=websocket,
                 )
-                if opponent_username := opponent["username"]:
+                opponent = ChatSelector().get_chat_opponent(
+                    db, chat_id, user_id)
+                if opponent:
+                    opponent_username = opponent.get("username", None)
                     opponent_ws = ws_connector.active_connections.get(
                         opponent_username)
                     if opponent_ws:
