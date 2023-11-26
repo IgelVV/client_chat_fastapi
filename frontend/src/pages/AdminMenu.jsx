@@ -1,20 +1,13 @@
-import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import axios from "../api/axios";
-
-const USERS_URL = '/'
+import { useNavigate, } from "react-router-dom";
 
 
 const AdminMenu = () => {
-    const [users, setUsers] = useState();
-    const axiosPrivate = axios
     const navigate = useNavigate();
-    const location = useLocation();
 
-    const navigateInbox = () =>{navigate("/users");}
-    const navigateMy = () =>{navigate("/counter");}
-    const navigateAll = () =>{navigate("/counter");}
-    
+    const navigateInbox = () => { navigate("/inbox"); }
+    const navigateMy = () => { navigate("/my"); }
+    const navigateAll = () => { navigate("/all"); }
+
 
     return (
         <section>
@@ -31,5 +24,5 @@ const AdminMenu = () => {
         </section>
     );
 };
-    
+
 export default AdminMenu;

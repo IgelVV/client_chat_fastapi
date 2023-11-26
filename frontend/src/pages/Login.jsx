@@ -2,8 +2,10 @@ import { useRef, useState, useEffect } from "react";
 import useAuth from "../hooks/useAuth";
 import localAuthName from "../hooks/useAuth";
 import {setObjectInLocalStorage} from "../utils/localStorageManager"
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from "../api/axios";
+
+import { getLocalAuth } from "../context/AuthProvider"
 
 const LOGIN_URL = '/auth/login/'
 
@@ -11,8 +13,7 @@ const LOGIN_URL = '/auth/login/'
 const Login = () => {
     const {setAuth} = useAuth();
     const navigate = useNavigate();
-    const location = useLocation();
-    const from = location.state?.from?.pathname || "/";
+    // const from = location.state?.from?.pathname || "/";
 
     const userRef = useRef(); 
     const errRef = useRef();
@@ -37,8 +38,8 @@ const Login = () => {
                     withCredentials: true
                 }
             )
-            console.log(response);
-            console.log(JSON.stringify(response));
+            // console.log(response);
+            // console.log(JSON.stringify(response));
             const accessToken = response?.data?.access_token;
             const isAdmin = response?.data?.is_admin;
             setAuth({username, password, isAdmin, accessToken});

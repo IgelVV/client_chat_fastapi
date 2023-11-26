@@ -30,13 +30,37 @@ class User(UserCreate):
 
 class Chat(BaseModel):
     id: int
-    customer: Optional[User]
-    admin: Optional[User]
+    customer_id: Optional[int]
+    admin_id: Optional[int]
+
+
+class ChatId(BaseModel):
+    id: int
+
+
+class ChatVerbose(BaseModel):
+    id: int
+    customer: Optional[str]
+    admin: Optional[str]
 
 
 class Message(BaseModel):
-    chat: Chat
+    id: int
+    chat_id: int
+    from_user_id: int
     datetime: datetime
+    text: str = Field(max_length=500)
+
+
+class MessageDisplay(BaseModel):
+    text: str
+    from_user: str
+    datetime: datetime
+
+
+class MessagePost(BaseModel):
+    chat_id: int
+    datetime: Optional[datetime]
     text: str = Field(max_length=500)
 
 

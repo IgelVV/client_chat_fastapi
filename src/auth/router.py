@@ -4,7 +4,6 @@ from typing import Annotated
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from starlette.status import HTTP_401_UNAUTHORIZED, HTTP_409_CONFLICT
-from jose import JWTError
 
 from src import schemas
 from src.auth.user_services import UserSelector, UserService
@@ -56,7 +55,7 @@ async def login(user_data: OAuth2PasswordRequestForm = Depends()):
     access_token_expires = timedelta(
         minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = service.create_access_token(
-        data={"sub": {"username": user["username"], "is_admin": user["is_admin"]}},
+        data={"sub": user["username"]},
         expires_delta=access_token_expires,
     )
     return {
@@ -68,15 +67,4 @@ async def login(user_data: OAuth2PasswordRequestForm = Depends()):
 
 @router.get("/me/", response_model=schemas.UserDisplay)
 async def read_users_me(token: Annotated[str, Depends(oauth2_scheme)]):
-    credentials_exception = HTTPException(
-        status_code=HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    try:
-        user = UserSelector().get_user_by_token(db, token)
-    except (ValueError, JWTError):
-        raise credentials_exception
-    if not user:
-        raise credentials_exception
-    return user
+    return UserSelector().get_user_by_token_or_401(db, token)

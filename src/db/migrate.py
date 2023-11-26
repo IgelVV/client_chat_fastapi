@@ -43,9 +43,11 @@ with connection:
             id INT NOT NULL AUTO_INCREMENT, 
             chat_id INT, 
             datetime DATETIME,
+            from_user_id INT,
             text TEXT(500),
             PRIMARY KEY (id),
-            FOREIGN KEY (chat_id) REFERENCES Chat(id)
+            FOREIGN KEY (chat_id) REFERENCES Chat(id),
+            FOREIGN KEY (from_user_id) REFERENCES User(id)
         )
         """
         cursor.execute(sql)
@@ -57,14 +59,17 @@ with connection:
     with connection.cursor() as cursor:
         sql = """
             INSERT IGNORE INTO User(username, password, is_admin) 
-            VALUES (%s, %s, %s)
+            VALUES (%s, %s, %s), (%s, %s, %s)
             """
-        cursor.execute(sql, (INITIAL_ADMIN_NAME, hashed_password, True))
+        cursor.execute(
+            sql,
+            (
+                INITIAL_ADMIN_NAME, hashed_password, True,
+                'user', hashed_password, False,
+            ),
+        )
 
     connection.commit()
     print("admin user is created.")
 
     print("Migration is completed.")
-
-
-# select LENGTH(SHA2(CONVERT('asasdasd' USING utf8), 256));

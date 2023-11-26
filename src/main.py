@@ -7,6 +7,7 @@ from src.db.connector import Database
 from src.auth.user_services import UserSelector
 from src import schemas
 from src.auth.router import router as auth_router
+from src.chat.router import router as chat_router
 from src.config import ALLOWED_ORIGINS
 
 db = Database().connection
@@ -20,22 +21,9 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["GET", "POST", "OPTIONS", "DELETE", "PATCH", "PUT"],
-    allow_headers=["Content-Type",
-                   "Set-Cookie",
-                   "Access-Control-Allow-Headers",
-                   "Access-Control-Allow-Origin",
-                   "Authorization"
-                   ],
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
-
-
-@app.get("/", response_model=Optional[list[schemas.UserDisplay]])
-async def hello():
-    with db.cursor() as cursor:
-        cursor.execute("SELECT * FROM User")
-        result = cursor.fetchall()
-    return result
 
 
 @app.get("/user/{username}", response_model=Optional[schemas.UserDisplay])
@@ -45,6 +33,7 @@ async def get_by_username(username: str):
 
 
 app.include_router(auth_router)
+app.include_router(chat_router)
 
 
 @app.on_event("shutdown")

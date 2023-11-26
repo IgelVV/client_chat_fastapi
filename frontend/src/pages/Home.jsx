@@ -1,24 +1,22 @@
-import { useRef, useState, useEffect } from "react";
-import useAuth from "../hooks/useAuth";
+import { useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.css'
+
+import { getObjectFromLocalStorage } from "../utils/localStorageManager";
+import localAuthName from "../hooks/useAuth";
 
 
 const Home = () => {
-    const { auth } = useAuth();
+    const auth = getObjectFromLocalStorage(localAuthName);
     const navigate = useNavigate();
-    console.log("home")
-    console.log(auth)
+
     useEffect(
-        ()=> {
-            console.log("home")
-            console.log(auth)
+        () => {
             if (auth?.isAdmin) {
                 navigate("/admin")
             } else {
-
+                console.log("redirect from Home")
                 navigate("/user")
-            }        
+            }
         }
     )
 

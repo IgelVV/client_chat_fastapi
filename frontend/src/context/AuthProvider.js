@@ -1,4 +1,7 @@
 import { createContext, useState } from "react";
+import { getObjectFromLocalStorage } from "../utils/localStorageManager";
+import localAuthName from "../hooks/useAuth";
+
 
 const AuthContext = createContext({})
 
@@ -13,3 +16,7 @@ export const AuthProvider = ({ children }) => {
 }
 
 export default AuthContext
+
+export const getLocalAuth = () => {
+    return(getObjectFromLocalStorage(localAuthName))
+}
